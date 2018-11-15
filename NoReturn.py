@@ -1,0 +1,4 @@
+
+class NoReturn (object):
+    pass
+

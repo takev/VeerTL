@@ -1,0 +1,4 @@
+
+class TemplateElseToken (TemplateSimpleToken):
+    pass
+
