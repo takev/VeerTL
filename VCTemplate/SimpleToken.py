@@ -7,5 +7,5 @@ class SimpleToken (Token.Token):
         super().__init__(source[:token_name.stop])
 
     def __repr__(self):
-        return "<%s>" % str(self.source + 1)
+        return "<%s>" % str(self.source + 1).strip()
 

@@ -25,6 +25,9 @@ class SourceFile (object):
         else:
             self.stop = stop
 
+    def __len__(self):
+        return self.stop - self.start
+
     def __add__(self, other):
         if isinstance(other, int):
             return self[self.start + other:]
@@ -69,11 +72,58 @@ class SourceFile (object):
     def __str__(self):
         return self.text[self.start:self.stop]
 
+    def isSameFile(self, other):
+        if self.path != other.path:
+            return False
+        if len(self.text) != len(other.text):
+            return False
+        return hash(self.text) == hash(other.text)
+
+    def merge(self, other):
+        """Merge SourceFile if they point to the same file and the stop and start line up.
+        """
+        if not self.isSameFile(other):
+            raise IndexError("Could not merge two source files as the files do not match.")
+        if self.stop != other.start:
+            raise IndexError("Could not merge two source files as .stop and .start do not match up.")
+
+        self.stop = other.stop
+
     def getRest(self):
         return self[self.stop:len(self.text)]
 
     def startswith(self, needle):
         return self.text.startswith(needle, self.start, self.stop)
+
+    def expand(self):
+        """Expand slice until a whole line, including trailing linefeed, is selected.
+        """
+
+        start = self.start
+        while start > 0 and self.text[start] in "\r\t ":
+            start -= 1
+
+        stop = self.stop
+        while stop < len(self.text) and self.text[stop] in "\r\t ":
+            stop += 1
+
+        # Absorb trailing line feed.
+        if self.text[stop] == "\n" and stop < len(self.text):
+            stop += 1
+
+        return self[start:stop]
+
+    def strip(self):
+        # Skip whitespace.
+        start = self.start
+        while start < self.stop and self.text[start].isspace():
+            start += 1
+
+        stop = self.stop
+        while stop > self.start and self.text[stop-1].isspace():
+            stop -= 1
+        
+        return self[start:stop] 
 
     def getLine(self):
         try:
@@ -98,12 +148,8 @@ class SourceFile (object):
         return self[start:stop]
 
     def getSimpleExpression(self, end_chars="\r\n"):
-        # Skip whitespace.
         start = self.start
-        while start < self.stop and self.text[start].isspace():
-            start += 1
-
-        stop = start
+        stop = self.start
         bracket_stack = []
         while stop < self.stop and (bracket_stack or self.text[stop] not in end_chars):
             c = self.text[stop]

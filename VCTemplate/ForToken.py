@@ -22,7 +22,7 @@ class ForToken (Token.Token, FlowControlToken.FlowControlToken):
             else:
                 raise ParseError(comma, "Unexpected string '%s'." % str(comma))
 
-        self.expression = source.getSimpleExpression()
+        self.expression = source.getSimpleExpression().strip()
         super().__init__(token_source[:self.expression.stop])
 
     def __repr__(self):
