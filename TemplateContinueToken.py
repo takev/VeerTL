@@ -1,4 +1,0 @@
-
-class TemplateContinueToken (TemplateSimpleToken):
-    pass
-

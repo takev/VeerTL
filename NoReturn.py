@@ -1,4 +1,0 @@
-
-class NoReturn (object):
-    pass
-

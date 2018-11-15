@@ -1,0 +1,7 @@
+
+#include test_include.vc
+
+Test1: ${hello_world_return(2, 3)}
+
+Test2: ${hello_world_output(2, 3)}
+
