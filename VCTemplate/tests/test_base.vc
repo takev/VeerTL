@@ -1,11 +1,11 @@
 HEAD
-#function top()
+%function top()
 Base Top
-#end
+%end
 ${top()}
 MIDDLE
-#function bottom()
+%function bottom()
 Base Bottom
-#end
+%end
 ${bottom()}
 TAIL

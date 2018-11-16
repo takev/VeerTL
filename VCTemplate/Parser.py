@@ -45,10 +45,10 @@ def parseToken(source):
     if source.startswith("${"):
         return PlaceholderToken.PlaceholderToken(source)
 
-    elif source.startswith("##"):
+    elif source.startswith("%%"):
         return StatementToken.StatementToken(source)
 
-    elif source.startswith("#"):
+    elif source.startswith("%"):
         token_string = str((source + 1).getSimpleToken())
         try:
             statement_parse_function = STATEMENT_PARSERS[token_string]
@@ -60,7 +60,7 @@ def parseToken(source):
     else:
         return TextToken.TextToken(source[:source.start + 1])
 
-START_TOKEN_RE = re.compile("[$#]")
+START_TOKEN_RE = re.compile("[$%]")
 def tokenize(source):
     """
     >>> from SourceFile import SourceFile
@@ -68,16 +68,16 @@ def tokenize(source):
     >>> list(tokenize(SourceFile("", "foo ${bar} baz")))
     ['foo ', ${bar}, ' baz']
 
-    >>> list(tokenize(SourceFile("", "foo\\n#if zap == 3\\nzip\\n#end\\nbaz")))
+    >>> list(tokenize(SourceFile("", "foo\\n%if zap == 3\\nzip\\n%end\\nbaz")))
     ['foo\\n', <if zap == 3>, 'zip\\n', <end>, 'baz']
 
-    >>> list(tokenize(SourceFile("", "foo\\n#while zap == 3\\nzip\\n#end\\nbaz")))
+    >>> list(tokenize(SourceFile("", "foo\\n%while zap == 3\\nzip\\n%end\\nbaz")))
     ['foo\\n', <while zap == 3>, 'zip\\n', <end>, 'baz']
 
-    >>> list(tokenize(SourceFile("", "foo\\n#for zap in 3 + 5\\nzip\\n#end\\nbaz")))
+    >>> list(tokenize(SourceFile("", "foo\\n%for zap in 3 + 5\\nzip\\n%end\\nbaz")))
     ['foo\\n', <for zap in 3 + 5>, 'zip\\n', <end>, 'baz']
 
-    >>> list(tokenize(SourceFile("", "\\tfoo\\r\\n## a = 5\\r\\nzip\\r\\n#end\\r\\nbaz")))
+    >>> list(tokenize(SourceFile("", "\\tfoo\\r\\n%% a = 5\\r\\nzip\\r\\n%end\\r\\nbaz")))
     ['\\tfoo\\r\\n', <statement 'a = 5\\n'>, 'zip\\r\\n', <end>, 'baz']
 
     """
@@ -108,7 +108,7 @@ def optimizedTokenize(source):
     >>> list(optimizedTokenize(SourceFile("", "foo $ baz")))
     ['foo $ baz']
 
-    >>> list(optimizedTokenize(SourceFile("", "## if a == 3:\\n##     a = 5\\n")))
+    >>> list(optimizedTokenize(SourceFile("", "%% if a == 3:\\n%%     a = 5\\n")))
     [<statement 'if a == 3:\\n    a = 5\\n'>]
     """
 
@@ -127,31 +127,31 @@ def parse(source, context=ParseContext.ParseContext()):
     >>> parse(SourceFile("", "foo ${bar} baz"))
     ['foo ', ${bar}, ' baz']
 
-    >>> parse(SourceFile("", "foo\\n#if zap == 3\\nzip\\n#end\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%if zap == 3\\nzip\\n%end\\nbaz"))
     ['foo\\n', <if zap == 3: ['zip\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#if zap == 3\\nzip\\n#else\\nbar\\n#end\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%if zap == 3\\nzip\\n%else\\nbar\\n%end\\nbaz"))
     ['foo\\n', <if zap == 3: ['zip\\n'] else ['bar\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#if zap == 3\\nzip\\n#elif zap > 4\\ntip\\n#else\\nbar\\n#end\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%if zap == 3\\nzip\\n%elif zap > 4\\ntip\\n%else\\nbar\\n%end\\nbaz"))
     ['foo\\n', <if zap == 3: ['zip\\n'] elif zap > 4: ['tip\\n'] else ['bar\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#while zap == 3\\nzip\\n#end\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%while zap == 3\\nzip\\n%end\\nbaz"))
     ['foo\\n', <while zap == 3: ['zip\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#do\\nzip\\n#while zap == 3\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%do\\nzip\\n%while zap == 3\\nbaz"))
     ['foo\\n', <dowhile zap == 3: ['zip\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#for zap in 3 + 5\\nzip\\n#end\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%for zap in 3 + 5\\nzip\\n%end\\nbaz"))
     ['foo\\n', <for zap in 3 + 5: ['zip\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#for zap in 3 + 5\\nzip\\n#else\\nbar\\n#end\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%for zap in 3 + 5\\nzip\\n%else\\nbar\\n%end\\nbaz"))
     ['foo\\n', <for zap in 3 + 5: ['zip\\n'] else ['bar\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#function zap(a, b)\\nzip\\n#end\\nbaz"))
+    >>> parse(SourceFile("", "foo\\n%function zap(a, b)\\nzip\\n%end\\nbaz"))
     ['foo\\n', <function zap(a, b): ['zip\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n## a = 5\\nbar\\n"))
+    >>> parse(SourceFile("", "foo\\n%% a = 5\\nbar\\n"))
     ['foo\\n', <statement 'a = 5\\n'>, 'bar\\n']
 
     >>> template = parse(SourceFile("tests/test.vc"))
@@ -164,13 +164,13 @@ def parse(source, context=ParseContext.ParseContext()):
     token_stack = [Template.Template(context)]
     for token in optimizedTokenize(source):
         if not token_stack:
-            raise ParseError.ParseError(token.source, "Unbalanced, too many, #end statement.")
+            raise ParseError.ParseError(token.source, "Unbalanced, too many, %end statement.")
 
         top = token_stack[-1]
 
         if isinstance(token, EndToken.EndToken):
             if len(token_stack) < 2:
-                raise ParseError.ParseError(token.source, "Unbalanced, too many, #end statement.")
+                raise ParseError.ParseError(token.source, "Unbalanced, too many, %end statement.")
 
             token_stack.pop()
 
@@ -186,7 +186,7 @@ def parse(source, context=ParseContext.ParseContext()):
 
         elif isinstance(token, FunctionToken.FunctionToken):
             if not isinstance(top, Template.Template):
-                raise ParseError.ParseError(token.source, "#function may only be instantiated at top level of a file.")
+                raise ParseError.ParseError(token.source, "%function may only be instantiated at top level of a file.")
 
             ast_node = token.getNode(context)
             top.append(ast_node)
@@ -199,19 +199,19 @@ def parse(source, context=ParseContext.ParseContext()):
 
         elif isinstance(token, ElifToken.ElifToken):
             if not isinstance(top, IfNode.IfNode):
-                raise ParseError.ParseError(token.source, "Unexpected #elif statement.")
+                raise ParseError.ParseError(token.source, "Unexpected %elif statement.")
 
             top.appendElif(token.expression)
 
         elif isinstance(token, ElseToken.ElseToken):
             if not isinstance(top, IfNode.IfNode) and not isinstance(top, ForNode.ForNode):
-                raise ParseError.ParseError(token.source, "Unexpected #else statement.")
+                raise ParseError.ParseError(token.source, "Unexpected %else statement.")
 
             top.appendElse()
 
         elif isinstance(token, IncludeToken.IncludeToken):
             if not isinstance(top, Template.Template):
-                raise ParseError.ParseError(token.source, "#include can only be instantiated at top level of a file.")
+                raise ParseError.ParseError(token.source, "%include can only be instantiated at top level of a file.")
 
             top.append(token.getNode(context))
 
@@ -219,9 +219,9 @@ def parse(source, context=ParseContext.ParseContext()):
             top.append(token.getNode(context))
 
     if not token_stack:
-        raise ParseError.ParseError(token.source, "Unbalanced, too many, #end statement.")
+        raise ParseError.ParseError(token.source, "Unbalanced, too many, %end statement.")
     elif len(token_stack) > 1:
-        raise ParseError.ParseError(token.source, "Unbalanced, too few, #end statement.")
+        raise ParseError.ParseError(token.source, "Unbalanced, too few, %end statement.")
 
     template = token_stack[-1]
     return template

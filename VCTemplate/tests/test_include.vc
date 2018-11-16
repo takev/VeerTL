@@ -1,7 +1,7 @@
-#function hello_world_return(a, b)
+%function hello_world_return(a, b)
 Hello World
-#return a + b
-#end
-#function hello_world_output(a, b)
+%return a + b
+%end
+%function hello_world_output(a, b)
 Hello World ${a} + ${b} = ${a + b}
-#end
+%end
