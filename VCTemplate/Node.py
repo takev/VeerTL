@@ -1,5 +1,4 @@
 
-import PostProcessResult
 
 class Node (object):
     @classmethod
@@ -10,9 +9,6 @@ class Node (object):
                 return r
         return r
 
-    def __init__(self):
-        pass
-
-    def postProcess(self, result):
-        pass
+    def __init__(self, context):
+        self.parse_context = context
 

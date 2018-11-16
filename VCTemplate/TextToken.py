@@ -13,8 +13,8 @@ class TextToken (Token.Token):
     def __bool__(self):
         return len(self) > 0
 
-    def getNode(self):
-        return TextNode.TextNode(self.source)
+    def getNode(self, context):
+        return TextNode.TextNode(context, self.source)
 
     def merge(self, other):
         if isinstance(other, TextToken):

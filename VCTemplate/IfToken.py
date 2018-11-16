@@ -10,6 +10,6 @@ class IfToken (SimpleExpressionToken.SimpleExpressionToken, FlowControlToken.Flo
     def __repr__(self):
         return "<if %s>" % str(self.expression)
 
-    def getNode(self):
-        return IfNode.IfNode(self.expression)
+    def getNode(self, context):
+        return IfNode.IfNode(context, self.expression)
 

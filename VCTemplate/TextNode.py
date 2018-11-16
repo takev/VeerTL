@@ -2,8 +2,8 @@
 import Node
 
 class TextNode (Node.Node):
-    def __init__(self, text):
-        super().__init__()
+    def __init__(self, context, text):
+        super().__init__(context)
         self.text = text
         self.s_text = str(text)
 

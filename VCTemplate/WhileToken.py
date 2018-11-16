@@ -10,5 +10,5 @@ class WhileToken (SimpleExpressionToken.SimpleExpressionToken, FlowControlToken.
     def __repr__(self):
         return "<while %s>" % str(self.expression)
 
-    def getNode(self):
-        return WhileNode.WhileNode(self.expression)
+    def getNode(self, context):
+        return WhileNode.WhileNode(context, self.expression)

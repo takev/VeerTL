@@ -62,7 +62,7 @@ class SourceFile (object):
 
     def columnNumber(self):
         try:
-            return self.text.rindex("\n", 0, self.start) + self.start + 2
+            return self.start - self.text.rindex("\n", 0, self.start) + 2
         except ValueError:
             return self.start + 1
 
@@ -108,7 +108,7 @@ class SourceFile (object):
             stop += 1
 
         # Absorb trailing line feed.
-        if self.text[stop] == "\n" and stop < len(self.text):
+        if stop < len(self.text) and self.text[stop] == "\n":
             stop += 1
 
         return self[start:stop]

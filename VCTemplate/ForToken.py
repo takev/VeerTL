@@ -28,6 +28,6 @@ class ForToken (Token.Token, FlowControlToken.FlowControlToken):
     def __repr__(self):
         return "<for %s in %s>" % (", ".join(str(x) for x in self.names), str(self.expression))
 
-    def getNode(self):
-        return ForNode.ForNode(self.names, self.expression)
+    def getNode(self, context):
+        return ForNode.ForNode(context, self.names, self.expression)
 

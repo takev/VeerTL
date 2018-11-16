@@ -9,5 +9,5 @@ class ReturnToken (SimpleExpressionToken.SimpleExpressionToken):
     def __repr__(self):
         return "<return %s>" % str(self.expression)
 
-    def getNode(self):
-        return ReturnNode.ReturnNode(self.expression)
+    def getNode(self, context):
+        return ReturnNode.ReturnNode(context, self.expression)

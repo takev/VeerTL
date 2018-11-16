@@ -26,10 +26,6 @@ Statements:
     #return <expr>
     #end
 
-    #method <name>
-    #end
-
     #include <filename>
-    #inherint <filename>
 """
 

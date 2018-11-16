@@ -10,6 +10,6 @@ class PlaceholderToken (Token.Token):
     def __repr__(self):
         return "${" + str(self.expression) + "}"
 
-    def getNode(self):
-        return PlaceholderNode.PlaceholderNode(self.expression)
+    def getNode(self, context):
+        return PlaceholderNode.PlaceholderNode(context, self.expression)
 

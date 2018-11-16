@@ -2,12 +2,10 @@
 import sys
 
 import Node
-import RenderContext
-import PostProcessResult
 
 class Template (Node.Node):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, context):
+        super().__init__(context)
         self.sequence = []
 
     def __repr__(self):
@@ -17,21 +15,9 @@ class Template (Node.Node):
         self.sequence.append(node)
 
     def makeRenderContext(self):
-        _globals = self.result.functions.copy()
-        return RenderContext.RenderContext(_globals=_globals, _locals={})
+        return self.parse_context.makeRenderContext()
 
     def render(self, context):
         return Node.Node.renderSequence(context, self.sequence)
 
-    def postProcess(self, result=None):
-        if result is None:
-            result = PostProcessResult.PostProcessResult()
-        else:
-            result = result
-
-        for node in self.sequence:
-            node.postProcess(result)
-
-        self.result = result
-        return result
 

@@ -9,8 +9,8 @@ import BreakNode
 import ReturnNode
         
 class DoWhileNode (Node.Node):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, context):
+        super().__init__(context)
         self.sequence = []
 
     def __repr__(self):

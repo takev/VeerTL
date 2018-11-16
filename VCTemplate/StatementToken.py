@@ -15,8 +15,8 @@ class StatementToken (Token.Token):
     def __repr__(self):
         return "<statement %s>" % repr(str(self))
 
-    def getNode(self):
-        return StatementNode.StatementNode(self.source, str(self))
+    def getNode(self, context):
+        return StatementNode.StatementNode(context, self.source, str(self))
 
     def merge(self, other):
         if isinstance(other, StatementToken):

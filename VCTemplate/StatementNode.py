@@ -5,8 +5,8 @@ import parser
 import Node
 
 class StatementNode (Node.Node):
-    def __init__(self, source, lines):
-        super().__init__()
+    def __init__(self, context, source, lines):
+        super().__init__(context)
         self.source = source
         self.lines = lines
         try:

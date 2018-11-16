@@ -3,6 +3,7 @@ import re
 import sys
 
 import ParseError
+import ParseContext
 
 import EndToken
 import DoToken
@@ -13,9 +14,7 @@ import ReturnToken
 import IfToken
 import ElifToken
 import WhileToken
-import MethodToken
 import IncludeToken
-import InherintToken
 import ForToken
 import FunctionToken
 import TextToken
@@ -38,9 +37,7 @@ STATEMENT_PARSERS = {
     "if": IfToken.IfToken,
     "elif": ElifToken.ElifToken,
     "while": WhileToken.WhileToken,
-    "method": MethodToken.MethodToken,
     "include": IncludeToken.IncludeToken,
-    "inherint": InherintToken.InherintToken,
     "for": ForToken.ForToken,
     "function": FunctionToken.FunctionToken,
 }
@@ -56,7 +53,7 @@ def parseToken(source):
         try:
             statement_parse_function = STATEMENT_PARSERS[token_string]
         except KeyError:
-            return Text(source[:source.start + 1])
+            return TextToken.TextToken(source[:source.start + 1])
 
         return statement_parse_function(source)
 
@@ -122,7 +119,7 @@ def optimizedTokenize(source):
             yield token
             previous_token = token
 
-def parse(source):
+def parse(source, context=ParseContext.ParseContext()):
     """
     >>> from SourceFile import SourceFile
     >>> from RenderContext import RenderContext
@@ -154,19 +151,17 @@ def parse(source):
     >>> parse(SourceFile("", "foo\\n#function zap(a, b)\\nzip\\n#end\\nbaz"))
     ['foo\\n', <function zap(a, b): ['zip\\n']>, 'baz']
 
-    >>> parse(SourceFile("", "foo\\n#method zap\\nzip\\n#end\\nbaz"))
-    ['foo\\n', <method zap: ['zip\\n']>, 'baz']
-
     >>> parse(SourceFile("", "foo\\n## a = 5\\nbar\\n"))
     ['foo\\n', <statement 'a = 5\\n'>, 'bar\\n']
 
-    >>> template = parse(SourceFile("test.vc"))
+    >>> template = parse(SourceFile("tests/test.vc"))
+    >>> repr(template)
     >>> context = template.makeRenderContext()
     >>> template.render(context)
     >>> str(context)
 
     """
-    token_stack = [Template.Template()]
+    token_stack = [Template.Template(context)]
     for token in optimizedTokenize(source):
         if not token_stack:
             raise ParseError.ParseError(token.source, "Unbalanced, too many, #end statement.")
@@ -185,20 +180,20 @@ def parse(source):
                 token_stack.pop()
 
             else:
-                ast_node = token.getNode()
+                ast_node = token.getNode(context)
                 top.append(ast_node)
                 token_stack.append(ast_node)
 
-        elif isinstance(token, FunctionToken.FunctionToken) or isinstance(token, MethodToken.MethodToken):
+        elif isinstance(token, FunctionToken.FunctionToken):
             if not isinstance(top, Template.Template):
-                raise ParseError.ParseError(token.source, "#function and #method may only be instantiated at top level of a file.")
+                raise ParseError.ParseError(token.source, "#function may only be instantiated at top level of a file.")
 
-            ast_node = token.getNode()
+            ast_node = token.getNode(context)
             top.append(ast_node)
             token_stack.append(ast_node)
 
         elif isinstance(token, FlowControlToken.FlowControlToken):
-            ast_node = token.getNode()
+            ast_node = token.getNode(context)
             top.append(ast_node)
             token_stack.append(ast_node)
 
@@ -214,14 +209,14 @@ def parse(source):
 
             top.appendElse()
 
-        elif isinstance(token, IncludeToken.IncludeToken) or isinstance(token, InherintToken.InherintToken):
+        elif isinstance(token, IncludeToken.IncludeToken):
             if not isinstance(top, Template.Template):
-                raise ParseError.ParseError(token.source, "#include and #inherint may only be instantiated at top level of a file.")
+                raise ParseError.ParseError(token.source, "#include can only be instantiated at top level of a file.")
 
-            top.append(token.getNode())
+            top.append(token.getNode(context))
 
         else:
-            top.append(token.getNode())
+            top.append(token.getNode(context))
 
     if not token_stack:
         raise ParseError.ParseError(token.source, "Unbalanced, too many, #end statement.")
@@ -229,7 +224,6 @@ def parse(source):
         raise ParseError.ParseError(token.source, "Unbalanced, too few, #end statement.")
 
     template = token_stack[-1]
-    template.postProcess()
     return template
 
 

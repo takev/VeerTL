@@ -19,8 +19,8 @@ class IfNode (Node.Node):
         def append(self, node):
             self.sequence.append(node)
 
-    def __init__(self, expression):
-        super().__init__()
+    def __init__(self, context, expression):
+        super().__init__(context)
         self.state = 0
         self.branches = [IfNode.Branch(expression)]
         self.else_sequence = []

@@ -10,8 +10,8 @@ import BreakNode
 import LoopContext
 
 class ForNode (Node.Node):
-    def __init__(self, names, expression):
-        super().__init__()
+    def __init__(self, context, names, expression):
+        super().__init__(context)
         self.names = [str(x) for x in names]
         self.expression = expression
         self.state = 0

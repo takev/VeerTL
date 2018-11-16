@@ -7,8 +7,8 @@ import BreakNode
 import ReturnNode
 
 class WhileNode (Node.Node):
-    def __init__(self, expression):
-        super().__init__()
+    def __init__(self, context, expression):
+        super().__init__(context)
         self.expression = expression
         try:
             self.code = parser.expr(str(expression)).compile("<" + repr(expression) + ">")

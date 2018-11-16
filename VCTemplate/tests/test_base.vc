@@ -1,0 +1,11 @@
+HEAD
+#function top()
+Base Top
+#end
+${top()}
+MIDDLE
+#function bottom()
+Base Bottom
+#end
+${bottom()}
+TAIL

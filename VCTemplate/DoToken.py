@@ -4,6 +4,6 @@ import FlowControlToken
 import DoWhileNode
 
 class DoToken (SimpleToken.SimpleToken, FlowControlToken.FlowControlToken):
-    def getNode(self):
-        return DoWhileNode.DoWhileNode()
+    def getNode(self, context):
+        return DoWhileNode.DoWhileNode(context)
 

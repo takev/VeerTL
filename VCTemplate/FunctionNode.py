@@ -1,23 +1,31 @@
 
+import sys
 import parser
 
 import RenderContext
 import RenderError
 import ReturnNode
 import Node
-import PostProcessResult
 
 class FunctionNode (Node.Node):
-    def __init__(self, name, arguments):
-        super().__init__()
+    def __init__(self, context, name, arguments):
+        super().__init__(context)
         self.name = name
         self.arguments = [str(x) for x in arguments]
         self.sequence = []
+        self.super = context.addFunction(name, self)
 
     def __repr__(self):
         return "<function %s(%s): %s>" % (str(self.name), ", ".join(self.arguments), repr(self.sequence))
 
     def __call__(self, *args, **argd):
+        print("FunctionNode(%s).__call__()" % str(self.name), file=sys.stderr)
+
+        try:
+            context = RenderContext.RenderContext.findRenderContext()
+        except Exception as e:
+            raise RenderError.RenderError(self.name, "Expect _render_context to be in the global namespace.") from e
+
         if len(args) > len(self.arguments):
             raise RenderError.RenderError(self.name, "Unexpected number of arguments (%i), expected (%i)." % (len(args), len(self.arguments)))
 
@@ -34,7 +42,11 @@ class FunctionNode (Node.Node):
             if name not in _locals:
                 raise RenderError.RenderError(self.name, "Missing argument (%s)." % (name))
 
-        context = RenderContext.RenderContext(_locals=_locals)
+        if self.super is not None:
+            _locals["super"] = self.super
+
+        context.push(_locals)
+
         r = Node.Node.renderSequence(context, self.sequence)
         if r is None:
             result = str(context)
@@ -43,6 +55,8 @@ class FunctionNode (Node.Node):
         else:
             raise RenderError.RenderError(self.name, "Unexpected break or continue in function.")
 
+        context.pop()
+        print("/FunctionNode(%s).__call__()" % str(self.name), file=sys.stderr)
         return result
 
     def append(self, node):
@@ -51,6 +65,4 @@ class FunctionNode (Node.Node):
     def render(self, context):
         return None
 
-    def postProcess(self, result):
-        result.addFunction(str(self.name), self)
 
