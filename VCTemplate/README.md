@@ -1,6 +1,15 @@
 # Template Language
 
-## Placeholder
+This template language was designed for code generation for different languages
+but specifically for VHDL. The language was inspired by makotemplate.org, but with
+a simpler data model making it more easy to do more complicated stuff.
+
+## Data model
+
+
+## Syntax
+
+### Placeholder
 The placeholder is a Python expression that is evaluated to a string and inserted
 into the resulting document where it was placed.
 
@@ -16,7 +25,7 @@ The placeholder can also be used to escape the `$` and `%` characters, for examp
 ${"$"} or ${"%"}
 ```
 
-## Python code
+### Python code
 You can execute a Python code directly in the template, this is mostly useful for importing
 external Python code or to calculate something that will be formated later by the template.
 
@@ -37,7 +46,7 @@ The following is an example on how to import Python code:
 ${os.path.join("/foo", "bar")}
 ```
 
-## Including
+### Including
 You can include another template in your current template.
 The execution of included template is done at the place where the `%include` statement is inserted
 in the text.
@@ -60,14 +69,91 @@ Syntax:
 %include <filename>
 ```
 
-## If statement
+### If statement
+Conditional `%if` statement, with optional `%elif` statments and optional end `%else` statement.
+The expression in the `%elif` statements are only executed if the result of the previous `%if` or `%else`
+was `False`.
 
-## For loop
+```
+%if <Python expression 1>
+<block 1>
+%elif <Python expression 2>
+<block 2>
+%elif <Python expression ...>
+<block ...>
+%else
+<block n>
+%end
+```
 
-## While loop
+### For loop
+A for loop iterates over the result in the Python expression. Each iteration-result is
+assigned to the name in front of the `in` keyword, optionally the iteration-result is
+unpacked into multiple names.
 
-## Do-while loop
+The `%else` part of the for loop is only executed when the result of the Python expression
+had zero items.
 
-## Function
+A local `_loop` variable is available inside the block. It has the attributes `first`, `last` and `i`
+for often used information to format code properly. The `outer` attribute is used to get information
+for the next output loop.
+
+```
+%for <name(s)> in <Python expression>
+<block>
+%else
+<block>
+%end
+```
+
+### While loop
+A while loop executes a block multiple times until the Python expression returns `False`.
+
+A local `_loop` variable is available inside the block. It has the attributes `first` aand `i`
+for often used information to format code properly. The `outer` attribute is used to get information
+for the next output loop.
+
+```
+%while <Python expression>
+<block>
+%end
+```
+
+### Do-while loop
+A do-while loop executes a block at least once until the Python expression returns `False`.
+
+A local `_loop` variable is available inside the block. It has the attributes `first` aand `i`
+for often used information to format code properly. The `outer` attribute is used to get information
+for the next output loop.
+
+```
+%do
+<block>
+%while <Python expression>
+```
+
+### Continue
+
+### Break
+
+### Function
+Define a function that can be called in expressions.
+A function with a return statement will simply return with its value.
+A function without a return statement will return its textual-output.
+
+Functions with the same name will replace the previously defined function.
+The previously defined function is available as `super` inside the block.
+This functionaliy together with the `%include` statement can be used for
+as a simple for of object-oriented-polymorphism.
+
+
+```
+%function <name>(<arguments>)
+<block>
+%end
+```
+
+### Return
+
 
 
