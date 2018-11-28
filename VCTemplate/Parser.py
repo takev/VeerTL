@@ -17,6 +17,7 @@ import WhileToken
 import IncludeToken
 import ForToken
 import FunctionToken
+import BlockToken
 import TextToken
 import PlaceholderToken
 import StatementToken
@@ -40,9 +41,10 @@ STATEMENT_PARSERS = {
     "include": IncludeToken.IncludeToken,
     "for": ForToken.ForToken,
     "function": FunctionToken.FunctionToken,
+    "block": BlockToken.BlockToken,
 }
 def parseToken(source):
-    if source.startswith("${"):
+    if source.startswith("%{"):
         return PlaceholderToken.PlaceholderToken(source)
 
     elif source.startswith("%%"):
@@ -60,13 +62,12 @@ def parseToken(source):
     else:
         return TextToken.TextToken(source[:source.start + 1])
 
-START_TOKEN_RE = re.compile("[$%]")
 def tokenize(source):
     """
     >>> from SourceFile import SourceFile
 
-    >>> list(tokenize(SourceFile("", "foo ${bar} baz")))
-    ['foo ', ${bar}, ' baz']
+    >>> list(tokenize(SourceFile("", "foo %{bar} baz")))
+    ['foo ', %{bar}, ' baz']
 
     >>> list(tokenize(SourceFile("", "foo\\n%if zap == 3\\nzip\\n%end\\nbaz")))
     ['foo\\n', <if zap == 3>, 'zip\\n', <end>, 'baz']
@@ -82,9 +83,9 @@ def tokenize(source):
 
     """
     while True:
-        match = START_TOKEN_RE.search(source.text, source.start)
-        if match:
-            token = TextToken.TextToken(source[:match.start(0)])
+        i = source.text.find("%", source.start)
+        if i != -1:
+            token = TextToken.TextToken(source[:i])
             if token:
                 yield token
 
@@ -124,8 +125,8 @@ def parse(source, context=ParseContext.ParseContext()):
     >>> from SourceFile import SourceFile
     >>> from RenderContext import RenderContext
 
-    >>> parse(SourceFile("", "foo ${bar} baz"))
-    ['foo ', ${bar}, ' baz']
+    >>> parse(SourceFile("", "foo %{bar} baz"))
+    ['foo ', %{bar}, ' baz']
 
     >>> parse(SourceFile("", "foo\\n%if zap == 3\\nzip\\n%end\\nbaz"))
     ['foo\\n', <if zap == 3: ['zip\\n']>, 'baz']
@@ -184,9 +185,9 @@ def parse(source, context=ParseContext.ParseContext()):
                 top.append(ast_node)
                 token_stack.append(ast_node)
 
-        elif isinstance(token, FunctionToken.FunctionToken):
+        elif isinstance(token, FunctionToken.FunctionToken) or isinstance(token, BlockToken.BlockToken):
             if not isinstance(top, Template.Template):
-                raise ParseError.ParseError(token.source, "%function may only be instantiated at top level of a file.")
+                raise ParseError.ParseError(token.source, "%function or %block may only be instantiated at top level of a file.")
 
             ast_node = token.getNode(context)
             top.append(ast_node)

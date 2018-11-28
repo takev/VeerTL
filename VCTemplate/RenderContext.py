@@ -15,20 +15,17 @@ class RenderContext (object):
             raise RuntimeError("Could not find stack frame in RenderContext.render_contexts")
 
 
-    def __init__(self, _globals=None, _locals={}):
-        if _globals is None:
-            self.globals = globals()
-        else:
-            self.globals = _globals
+    def __init__(self, _globals, _locals):
+        self.globals = _globals
+        self.locals = _locals
 
         # For performance reasons insert the __builtins__.
         self.globals["__builtins__"] = globals()["__builtins__"]
 
         self.locals_stack = []
-        self.locals = _locals
         self.output_stack = []
         self.output = []
-        self.rendered_methods = set()
+        self.rendered_blocks = set()
 
     def __str__(self):
         return "".join(str(x) for x in self.output)
@@ -55,8 +52,8 @@ class RenderContext (object):
             del self.globals[name]
 
     def push(self, _locals):
-        self.locals_stack.append(self.locals.copy())
-        self.locals.update(_locals)
+        self.locals_stack.append(self.locals)
+        self.locals = _locals
         self.output_stack.append(self.output.copy())
         self.output = []
 
@@ -88,10 +85,10 @@ class RenderContext (object):
     def append(self, value):
         self.output.append(value)
 
-    def wantToCallMethod(self, name):
-        if name in self.rendered_methods:
+    def callingBlock(self, name):
+        if name in self.rendered_blocks:
             return False
         else:
-            self.rendered_methods.add(name)
+            self.rendered_blocks.add(name)
             return True
 

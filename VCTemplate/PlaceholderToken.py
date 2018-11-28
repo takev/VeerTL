@@ -8,7 +8,7 @@ class PlaceholderToken (Token.Token):
         super().__init__(source[:self.expression.stop + 1])
 
     def __repr__(self):
-        return "${" + str(self.expression) + "}"
+        return "%%{%s}" % str(self.expression)
 
     def getNode(self, context):
         return PlaceholderNode.PlaceholderNode(context, self.expression)

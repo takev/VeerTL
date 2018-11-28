@@ -1,11 +1,11 @@
 %include test_base.vc
 %include test_include.vc
 
-%function bottom()
-Test1: ${hello_world_return(2, 3)}
-${super()}
-Test2: ${hello_world_output(2, 3)}
+%block bottom
+Test1: %{hello_world_return(2, 3)}
+%{prior()}
+Test2: %{hello_world_output(2, 3)}
 %end
 
 %% import os.path
-${os.path.join("/foo", "bar")}
+%{os.path.join("/foo", "bar")}

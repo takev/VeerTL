@@ -1,6 +1,7 @@
 
 import ParseError
 import RenderContext
+import sys
 
 class ParseContext (object):
     def __init__(self):
@@ -8,10 +9,11 @@ class ParseContext (object):
 
     def addFunction(self, name, func):
         old_func = self.functions.get(str(name), None)
+        print(str(name), old_func, repr(self.functions), file=sys.stderr)
         self.functions[str(name)] = func
         return old_func
 
     def makeRenderContext(self):
         _globals = self.functions.copy()
-        return RenderContext.RenderContext(_globals=_globals, _locals={})
+        return RenderContext.RenderContext(_globals=_globals, _locals=_globals)
 

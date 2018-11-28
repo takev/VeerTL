@@ -13,14 +13,12 @@ class FunctionNode (Node.Node):
         self.name = name
         self.arguments = [str(x) for x in arguments]
         self.sequence = []
-        self.super = context.addFunction(name, self)
+        self.prior = context.addFunction(name, self)
 
     def __repr__(self):
         return "<function %s(%s): %s>" % (str(self.name), ", ".join(self.arguments), repr(self.sequence))
 
     def __call__(self, *args, **argd):
-        print("FunctionNode(%s).__call__()" % str(self.name), file=sys.stderr)
-
         try:
             context = RenderContext.RenderContext.findRenderContext()
         except Exception as e:
@@ -42,9 +40,10 @@ class FunctionNode (Node.Node):
             if name not in _locals:
                 raise RenderError.RenderError(self.name, "Missing argument (%s)." % (name))
 
-        if self.super is not None:
-            _locals["super"] = self.super
+        if self.prior is not None:
+            _locals["prior"] = self.prior
 
+        print("__call__", str(self.name), _locals, file=sys.stderr)
         context.push(_locals)
 
         r = Node.Node.renderSequence(context, self.sequence)
@@ -56,7 +55,7 @@ class FunctionNode (Node.Node):
             raise RenderError.RenderError(self.name, "Unexpected break or continue in function.")
 
         context.pop()
-        print("/FunctionNode(%s).__call__()" % str(self.name), file=sys.stderr)
+        print("/__call__", str(self.name), _locals, file=sys.stderr)
         return result
 
     def append(self, node):

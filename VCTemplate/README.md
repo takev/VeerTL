@@ -16,13 +16,13 @@ into the resulting document where it was placed.
 The placeholder has the following syntax:
 
 ```
-${<Python expression>}
+%{<Python expression>}
 ```
 
-The placeholder can also be used to escape the `$` and `%` characters, for example:
+The placeholder can also be used to escape the `%` character, for example:
 
 ```
-${"$"} or ${"%"}
+%{"%"}
 ```
 
 ### Python code
@@ -94,7 +94,7 @@ unpacked into multiple names.
 The `%else` part of the for loop is only executed when the result of the Python expression
 had zero items.
 
-A local `_loop` variable is available inside the block. It has the attributes `first`, `last` and `i`
+A local `loop` variable is available inside the block. It has the attributes `first`, `last` and `i`
 for often used information to format code properly. The `outer` attribute is used to get information
 for the next output loop.
 
@@ -109,7 +109,7 @@ for the next output loop.
 ### While loop
 A while loop executes a block multiple times until the Python expression returns `False`.
 
-A local `_loop` variable is available inside the block. It has the attributes `first` and `i`
+A local `loop` variable is available inside the block. It has the attributes `first` and `i`
 for often used information to format code properly. The `outer` attribute is used to get information
 for the next outer loop.
 
@@ -122,7 +122,7 @@ for the next outer loop.
 ### Do-while loop
 A do-while loop executes a block at least once until the Python expression returns `False`.
 
-A local `_loop` variable is available inside the block. It has the attributes `first` and `i`
+A local `loop` variable is available inside the block. It has the attributes `first` and `i`
 for often used information to format code properly. The `outer` attribute is used to get information
 for the next outer loop.
 
@@ -152,7 +152,7 @@ A function with a return statement will simply return with its value.
 A function without a return statement will return its textual-output.
 
 Functions with the same name will replace the previously defined function.
-The previously defined function is available as `super` inside the block.
+The previously defined function is available as `prior` inside the block.
 This functionaliy together with the `%include` statement can be used for
 as a simple form of object-oriented-polymorphism.
 
@@ -165,7 +165,7 @@ as a simple form of object-oriented-polymorphism.
 ```
 %function <name>(<arguments>)
 <block>
-${super()]
+${prior()}
 <block>
 %end
 ```
@@ -183,7 +183,7 @@ name is defined later it instead is executed in place of the first. A block
 of the same name will only be implicently executed once, in place of the first
 definition.
 
-The previously defined block is available as `super` inside the block.
+The previously defined block is available as `prior` inside the block.
 This functionaliy together with the `%include` statement can be used for
 as a simple form of object-oriented-polymorphism.
 
