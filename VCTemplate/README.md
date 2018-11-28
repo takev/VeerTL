@@ -109,9 +109,9 @@ for the next output loop.
 ### While loop
 A while loop executes a block multiple times until the Python expression returns `False`.
 
-A local `_loop` variable is available inside the block. It has the attributes `first` aand `i`
+A local `_loop` variable is available inside the block. It has the attributes `first` and `i`
 for often used information to format code properly. The `outer` attribute is used to get information
-for the next output loop.
+for the next outer loop.
 
 ```
 %while <Python expression>
@@ -122,9 +122,9 @@ for the next output loop.
 ### Do-while loop
 A do-while loop executes a block at least once until the Python expression returns `False`.
 
-A local `_loop` variable is available inside the block. It has the attributes `first` aand `i`
+A local `_loop` variable is available inside the block. It has the attributes `first` and `i`
 for often used information to format code properly. The `outer` attribute is used to get information
-for the next output loop.
+for the next outer loop.
 
 ```
 %do
@@ -133,8 +133,18 @@ for the next output loop.
 ```
 
 ### Continue
+Stop executing of a block inside a loop, then continue with the next iteration of the loop.
+
+```
+%continue
+```
 
 ### Break
+Stop executing of a block inside a loop, then break out of the loop.
+
+```
+%break
+```
 
 ### Function
 Define a function that can be called in expressions.
@@ -144,8 +154,7 @@ A function without a return statement will return its textual-output.
 Functions with the same name will replace the previously defined function.
 The previously defined function is available as `super` inside the block.
 This functionaliy together with the `%include` statement can be used for
-as a simple for of object-oriented-polymorphism.
-
+as a simple form of object-oriented-polymorphism.
 
 ```
 %function <name>(<arguments>)
@@ -153,7 +162,36 @@ as a simple for of object-oriented-polymorphism.
 %end
 ```
 
+```
+%function <name>(<arguments>)
+<block>
+${super()]
+<block>
+%end
+```
+
 ### Return
+Return a Python object from a function.
+
+```
+%return <Python expression>
+```
+
+### Named block
+This simply executes the block where it was defined. When a block of the same
+name is defined later it instead is executed in place of the first. A block
+of the same name will only be implicently executed once, in place of the first
+definition.
+
+The previously defined block is available as `super` inside the block.
+This functionaliy together with the `%include` statement can be used for
+as a simple form of object-oriented-polymorphism.
+
+```
+%block <name>
+<block>
+%end
+```
 
 
 
