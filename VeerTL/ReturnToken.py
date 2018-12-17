@@ -1,6 +1,6 @@
 
-import SimpleExpressionToken
-import ReturnNode
+from . import SimpleExpressionToken
+from . import ReturnNode
 
 class ReturnToken (SimpleExpressionToken.SimpleExpressionToken):
     def __init__(self, source):

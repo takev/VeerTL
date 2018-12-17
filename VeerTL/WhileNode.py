@@ -1,10 +1,10 @@
 
 import parser
 
-import Node
-import ContinueNode
-import BreakNode
-import ReturnNode
+from . import Node
+from . import ContinueNode
+from . import BreakNode
+from . import ReturnNode
 
 class WhileNode (Node.Node):
     def __init__(self, context, expression):

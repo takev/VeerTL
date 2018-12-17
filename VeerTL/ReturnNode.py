@@ -1,9 +1,9 @@
 
 import parser
 
-import ParseError
-import RenderError
-import Node
+from . import ParseError
+from . import RenderError
+from . import Node
 
 class ReturnNode (Node.Node):
     def __init__(self, context, expression):

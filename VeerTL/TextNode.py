@@ -1,5 +1,5 @@
 
-import Node
+from . import Node
 
 class TextNode (Node.Node):
     def __init__(self, context, text):

@@ -1,5 +1,5 @@
 
-import SimpleExpressionToken
+from . import SimpleExpressionToken
 
 class ElifToken (SimpleExpressionToken.SimpleExpressionToken):
     def __init__(self, source):

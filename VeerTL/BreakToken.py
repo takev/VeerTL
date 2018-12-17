@@ -1,5 +1,5 @@
 
-import SimpleToken
+from . import SimpleToken
 
 class BreakToken (SimpleToken.SimpleToken):
     pass

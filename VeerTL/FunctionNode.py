@@ -2,10 +2,10 @@
 import sys
 import parser
 
-import RenderContext
-import RenderError
-import ReturnNode
-import Node
+from . import RenderContext
+from . import RenderError
+from . import ReturnNode
+from . import Node
 
 class FunctionNode (Node.Node):
     def __init__(self, context, name, arguments):

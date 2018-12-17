@@ -1,7 +1,7 @@
 
-import ParseError
-import Token
-import BlockNode
+from . import ParseError
+from . import Token
+from . import BlockNode
 
 class BlockToken (Token.Token):
     def __init__(self, token_source):

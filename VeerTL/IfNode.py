@@ -1,9 +1,9 @@
 
 import parser
 
-import ParseError
-import RenderError
-import Node
+from . import ParseError
+from . import RenderError
+from . import Node
 
 class IfNode (Node.Node):
     class Branch (object):

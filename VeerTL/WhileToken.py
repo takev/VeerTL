@@ -1,7 +1,7 @@
 
-import SimpleExpressionToken
-import FlowControlToken
-import WhileNode
+from . import SimpleExpressionToken
+from . import FlowControlToken
+from . import WhileNode
 
 class WhileToken (SimpleExpressionToken.SimpleExpressionToken, FlowControlToken.FlowControlToken):
     def __init__(self, source):

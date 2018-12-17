@@ -1,7 +1,7 @@
 
-import ParseError
-import Token
-import FunctionNode
+from . import ParseError
+from . import Token
+from . import FunctionNode
 
 class FunctionToken (Token.Token):
     def __init__(self, token_source):

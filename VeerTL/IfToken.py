@@ -1,7 +1,7 @@
 
-import SimpleExpressionToken
-import FlowControlToken
-import IfNode
+from . import SimpleExpressionToken
+from . import FlowControlToken
+from . import IfNode
 
 class IfToken (SimpleExpressionToken.SimpleExpressionToken, FlowControlToken.FlowControlToken):
     def __init__(self, source):

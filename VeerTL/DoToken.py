@@ -1,7 +1,7 @@
 
-import SimpleToken
-import FlowControlToken
-import DoWhileNode
+from . import SimpleToken
+from . import FlowControlToken
+from . import DoWhileNode
 
 class DoToken (SimpleToken.SimpleToken, FlowControlToken.FlowControlToken):
     def getNode(self, context):

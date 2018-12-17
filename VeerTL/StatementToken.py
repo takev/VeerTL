@@ -1,6 +1,6 @@
 
-import Token
-import StatementNode
+from . import Token
+from . import StatementNode
 
 class StatementToken (Token.Token):
     def __init__(self, source):

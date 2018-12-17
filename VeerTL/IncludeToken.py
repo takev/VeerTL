@@ -1,8 +1,9 @@
 
 import sys
 import os.path
-import SimpleExpressionToken
-import SourceFile
+
+from . import SimpleExpressionToken
+from . import SourceFile
 
 class IncludeToken (SimpleExpressionToken.SimpleExpressionToken):
     def __init__(self, source):
@@ -12,7 +13,7 @@ class IncludeToken (SimpleExpressionToken.SimpleExpressionToken):
         return "<include %s>" % str(self.path)
 
     def getNode(self, context):
-        import Parser
+        from . import Parser
 
         # Calculate the new path relative to the path of the template
         # file that contains this include statement.

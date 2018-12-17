@@ -1,5 +1,5 @@
 
-import Node
+from . import Node
 
 class ContinueNode (Node.Node):
     def render(self, context):

@@ -1,12 +1,12 @@
 
 import parser
 
-import ParseError
-import RenderError
-import Node
-import ContinueNode
-import BreakNode
-import ReturnNode
+from . import ParseError
+from . import RenderError
+from . import Node
+from . import ContinueNode
+from . import BreakNode
+from . import ReturnNode
         
 class DoWhileNode (Node.Node):
     def __init__(self, context):

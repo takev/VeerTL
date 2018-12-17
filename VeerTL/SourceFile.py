@@ -1,7 +1,8 @@
 
 import sys
 import os.path
-import ParseError
+
+from . import ParseError
 
 class SourceFile (object):
     BRACKET_REVERSE = str.maketrans("([{}])", ")]}{[(")

@@ -2,31 +2,31 @@
 import re
 import sys
 
-import ParseError
-import ParseContext
+from . import ParseError
+from . import ParseContext
 
-import EndToken
-import DoToken
-import ElseToken
-import BreakToken
-import ContinueToken
-import ReturnToken
-import IfToken
-import ElifToken
-import WhileToken
-import IncludeToken
-import ForToken
-import FunctionToken
-import BlockToken
-import TextToken
-import PlaceholderToken
-import StatementToken
-import FlowControlToken
+from . import EndToken
+from . import DoToken
+from . import ElseToken
+from . import BreakToken
+from . import ContinueToken
+from . import ReturnToken
+from . import IfToken
+from . import ElifToken
+from . import WhileToken
+from . import IncludeToken
+from . import ForToken
+from . import FunctionToken
+from . import BlockToken
+from . import TextToken
+from . import PlaceholderToken
+from . import StatementToken
+from . import FlowControlToken
 
-import Template
-import IfNode
-import ForNode
-import DoWhileNode
+from . import Template
+from . import IfNode
+from . import ForNode
+from . import DoWhileNode
 
 STATEMENT_PARSERS = {
     "end": EndToken.EndToken,

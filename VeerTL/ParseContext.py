@@ -1,7 +1,8 @@
 
-import ParseError
-import RenderContext
 import sys
+
+from . import ParseError
+from . import RenderContext
 
 class ParseContext (object):
     def __init__(self):

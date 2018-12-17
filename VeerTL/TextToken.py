@@ -1,7 +1,8 @@
 
 import sys
-import Token
-import TextNode
+
+from . import Token
+from . import TextNode
 
 class TextToken (Token.Token):
     def __repr__(self):

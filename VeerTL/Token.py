@@ -1,8 +1,8 @@
 
 class Token (object):
     def __init__(self, source):
-        import PlaceholderToken
-        import TextToken
+        from . import PlaceholderToken
+        from . import TextToken
         if isinstance(self, PlaceholderToken.PlaceholderToken) or isinstance(self, TextToken.TextToken):
             self.source = source
         else:

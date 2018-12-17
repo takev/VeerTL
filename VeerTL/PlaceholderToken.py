@@ -1,6 +1,6 @@
 
-import Token
-import PlaceholderNode
+from . import Token
+from . import PlaceholderNode
 
 class PlaceholderToken (Token.Token):
     def __init__(self, source):

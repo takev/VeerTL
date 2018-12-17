@@ -1,7 +1,7 @@
 
-import Token
-import FlowControlToken
-import ForNode
+from . import Token
+from . import FlowControlToken
+from . import ForNode
 
 class ForToken (Token.Token, FlowControlToken.FlowControlToken):
     def __init__(self, token_source):

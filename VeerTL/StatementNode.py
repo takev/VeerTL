@@ -1,8 +1,9 @@
 
-import ParseError
-import RenderError
 import parser
-import Node
+
+from . import ParseError
+from . import RenderError
+from . import Node
 
 class StatementNode (Node.Node):
     def __init__(self, context, source, lines):

@@ -1,5 +1,5 @@
 
-import Token
+from . import Token
 
 class SimpleExpressionToken (Token.Token):
     def __init__(self, source, attribute):

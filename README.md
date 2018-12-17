@@ -49,7 +49,7 @@ The following is an example on how to import Python code:
 
 ```
 %% import os.path
-${os.path.join("/foo", "bar")}
+%{os.path.join("/foo", "bar")
 ```
 
 ### Including
@@ -171,7 +171,7 @@ as a simple form of object-oriented-polymorphism.
 ```
 %function <name>(<arguments>)
 <block>
-${prior()}
+%{prior()}
 <block>
 %end
 ```

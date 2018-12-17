@@ -1,7 +1,7 @@
 
 import sys
 
-import Node
+from . import Node
 
 class Template (Node.Node):
     def __init__(self, context):

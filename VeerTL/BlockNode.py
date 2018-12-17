@@ -2,8 +2,8 @@
 import sys
 import parser
 
-import FunctionNode
-import ParseError
+from . import FunctionNode
+from . import ParseError
 
 class BlockNode (FunctionNode.FunctionNode):
     def __init__(self, context, name):

@@ -1,13 +1,13 @@
 
 import parser
 
-import ParseError
-import RenderError
-import Node
-import ReturnNode
-import ContinueNode
-import BreakNode
-import LoopContext
+from . import ParseError
+from . import RenderError
+from . import Node
+from . import ReturnNode
+from . import ContinueNode
+from . import BreakNode
+from . import LoopContext
 
 class ForNode (Node.Node):
     def __init__(self, context, names, expression):
