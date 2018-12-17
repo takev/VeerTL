@@ -14,6 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from . import Parser as __Parser
+from . import SourceFile as __SourceFile
+
+parse = __Parser.parse
+SourceFile = __SourceFile.SourceFile
+
 """Parse a text file as a template.
 
 Placeholders:

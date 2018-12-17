@@ -108,3 +108,7 @@ class RenderContext (object):
             self.rendered_blocks.add(name)
             return True
 
+    def write(self, fd):
+        for x in self.output:
+            fd.write(str(x))
+

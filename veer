@@ -17,28 +17,121 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
-import VeerTL.Parser as vtlp
+import os
+import os.path
+import shutil
+import fnmatch
+
+import VeerTL
 
 arg_parser = argparse.ArgumentParser(
     description="Template Language for code generation"
 )
-arg_parser.add_argument("input-paths", nargs="*")
+arg_parser.add_argument("inputs", nargs="+")
 arg_parser.add_argument("--verbose", "-v", action="count")
-arg_parser.add_argument("--walk", action="store_true", help="Walk the given directory for templates ending in .vtl")
-arg_parser.add_argument("--output-dir", help="In combination with walk, the directory where all rendered templates are copied to")
+arg_parser.add_argument("--output", "-o", help="Output file or output dir")
+arg_parser.add_argument("--ignore", help="Ignore glob pattern", action="append", default=["*.vti"])
+arg_parser.add_argument("--hard-link", "-l", help="Create hard links of files", action="store_const", dest="link_method", const="h", default="h")
+arg_parser.add_argument("--symbolic-link", "-s", help="Create symbolic links to files", action="store_const", dest="link_method", const="s")
+arg_parser.add_argument("--copy", "-c", help="Create copies of files", action="store_const", dest="link_method", const="c")
 
 options = arg_parser.parse_args()
 
+def log(level, s):
+    if options.verbose >= level:
+        print(s)
 
-if options.walk:
-    if len(options.input_paths) == 0:
-        options.input_paths.append(".")
+def render_template(input_path, output_path):
+    source_file = VeerTL.SourceFile(input_path)
+    template = VeerTL.parse(source_file)
+    context = template.makeRenderContext()
+    template.render(context)
 
-    print(options.input_paths)
-else:
-    print(options.input_paths)
+    fd = open(output_path, "wt")
+    context.write(fd)
+    fd.close()
+
+def handle_file(input_path, output_path, output_is_filename=False):
+    input_filename = os.path.basename(input_path)
+    input_ext = os.path.splitext(input_path)[1]
+
+    for pattern in options.ignore:
+        if fnmatch.fnmatch(input_filename, pattern):
+            log(1, "File is ignored '%s'." % input_filename)
+
+    if os.path.isdir(output_path) or output_path.endswith("/"):
+        # Override if is is really a directory which already exists.
+        output_is_filename=False
+
+    # Normalize the output_path.
+    if output_is_filename:
+        output_dir, output_filename = os.path.split(output_path)
+    else:
+        output_dir = output_path
+        if input_ext == ".vtl":
+            output_filename = os.path.splitext(input_filename)[0]
+        else:
+            output_filename = input_filename
+    output_path = os.path.join(output_dir, output_filename)
+
+    # Create output directories.
+    os.makedirs(output_dir, exist_ok=True)
+
+    if input_ext == ".vtl":
+        log(2, "Rendering '%s' -> '%s'" % (input_path, output_path))
+        render_template(input_path, output_path)
+
+    elif os.path.exists(output_path) and os.path.samefile(input_path, output_path):
+        log(1, "File already same '%s' -> '%s'" % (input_path, output_path))
+
+    else:
+        if options.link_method == "h":
+            log(2, "Hard linking '%s' -> '%s'" % (input_path, output_path))
+            os.link(input_path, output_path)
+        elif options.link_method == "s":
+            log(2, "Symbolic linking '%s' -> '%s'" % (input_path, output_path))
+            os.symlink(input_path, output_path)
+        elif options.link_method == "c":
+            log(2, "Copying '%s' -> '%s'" % (input_path, output_path))
+            shutil.copyfile(input_path, output_path)
+        else:
+            raise RuntimeError("Unknown link method '%s'" % options.link_method)
 
 
+def walk_dir(input_dir, output_dir):
+    for entry in os.scandir(input_dir):
+        if entry.name in (".", ".."):
+            continue
 
-print("Hello World")
+        if entry.is_file():
+            handle_file(entry.path, output_dir)
+
+        elif entry.is_dir():
+            walk_dir(entry.path, os.path.join(output_dir, entry.name))
+
+        else:
+            log(1, "Not a file or directory '%s'." % entry.path)
+
+def main():
+    for input_path in options.inputs:
+        if options.output:
+            output_path = options.output
+        else:
+            if os.path.isdir(input_path):
+                output_path = input_path
+            else:
+                output_path = os.path.dirname(input_path)
+
+        if os.path.isfile(input_path):
+            handle_file(input_path, output_path, output_is_filename=False)
+
+        elif os.path.isdir(input_path):
+            walk_dir(input_path, output_path)
+
+        else:
+            log(1, "Not a file or directory '%s'." % input_path)
+
+
+if __name__ == "__main__":
+    main()
 

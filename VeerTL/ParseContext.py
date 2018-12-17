@@ -21,6 +21,7 @@ from . import RenderContext
 
 class ParseContext (object):
     def __init__(self):
+        self.start_char = "%"
         self.functions = {}
 
     def addFunction(self, name, func):

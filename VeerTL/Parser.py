@@ -58,14 +58,14 @@ STATEMENT_PARSERS = {
     "function": FunctionToken.FunctionToken,
     "block": BlockToken.BlockToken,
 }
-def parseToken(source):
-    if source.startswith("%{"):
+def parseToken(source, start_char):
+    if source.startswith(start_char + "{"):
         return PlaceholderToken.PlaceholderToken(source)
 
-    elif source.startswith("%%"):
+    elif source.startswith(start_char + start_char):
         return StatementToken.StatementToken(source)
 
-    elif source.startswith("%"):
+    elif source.startswith(start_char):
         token_string = str((source + 1).getSimpleToken())
         try:
             statement_parse_function = STATEMENT_PARSERS[token_string]
@@ -77,7 +77,7 @@ def parseToken(source):
     else:
         return TextToken.TextToken(source[:source.start + 1])
 
-def tokenize(source):
+def tokenize(source, start_char):
     """
     >>> from SourceFile import SourceFile
 
@@ -98,7 +98,7 @@ def tokenize(source):
 
     """
     while True:
-        i = source.text.find("%", source.start)
+        i = source.text.find(start_char, source.start)
         if i != -1:
             token = TextToken.TextToken(source[:i])
             if token:
@@ -106,7 +106,7 @@ def tokenize(source):
 
             source = token.getRest()
 
-            token = parseToken(source)
+            token = parseToken(source, start_char=start_char)
             yield token
             source = token.getRest()
 
@@ -117,7 +117,7 @@ def tokenize(source):
 
             break
 
-def optimizedTokenize(source):
+def optimizedTokenize(source, start_char):
     """
     >>> from SourceFile import SourceFile
 
@@ -129,7 +129,7 @@ def optimizedTokenize(source):
     """
 
     previous_token = None
-    for token in tokenize(source):
+    for token in tokenize(source, start_char=start_char):
 
         if not previous_token or not previous_token.merge(token):
             yield token
@@ -178,15 +178,15 @@ def parse(source, context=ParseContext.ParseContext()):
 
     """
     token_stack = [Template.Template(context)]
-    for token in optimizedTokenize(source):
+    for token in optimizedTokenize(source, start_char=context.start_char):
         if not token_stack:
-            raise ParseError.ParseError(token.source, "Unbalanced, too many, %end statement.")
+            raise ParseError.ParseError(token.source, "Unbalanced, too many, 'end' statement.")
 
         top = token_stack[-1]
 
         if isinstance(token, EndToken.EndToken):
             if len(token_stack) < 2:
-                raise ParseError.ParseError(token.source, "Unbalanced, too many, %end statement.")
+                raise ParseError.ParseError(token.source, "Unbalanced, too many, 'end' statement.")
 
             token_stack.pop()
 
@@ -202,7 +202,7 @@ def parse(source, context=ParseContext.ParseContext()):
 
         elif isinstance(token, FunctionToken.FunctionToken) or isinstance(token, BlockToken.BlockToken):
             if not isinstance(top, Template.Template):
-                raise ParseError.ParseError(token.source, "%function or %block may only be instantiated at top level of a file.")
+                raise ParseError.ParseError(token.source, "'function' or 'block' may only be instantiated at top level of a file.")
 
             ast_node = token.getNode(context)
             top.append(ast_node)
@@ -215,19 +215,19 @@ def parse(source, context=ParseContext.ParseContext()):
 
         elif isinstance(token, ElifToken.ElifToken):
             if not isinstance(top, IfNode.IfNode):
-                raise ParseError.ParseError(token.source, "Unexpected %elif statement.")
+                raise ParseError.ParseError(token.source, "Unexpected 'elif' statement.")
 
             top.appendElif(token.expression)
 
         elif isinstance(token, ElseToken.ElseToken):
             if not isinstance(top, IfNode.IfNode) and not isinstance(top, ForNode.ForNode):
-                raise ParseError.ParseError(token.source, "Unexpected %else statement.")
+                raise ParseError.ParseError(token.source, "Unexpected 'else' statement.")
 
             top.appendElse()
 
         elif isinstance(token, IncludeToken.IncludeToken):
             if not isinstance(top, Template.Template):
-                raise ParseError.ParseError(token.source, "%include can only be instantiated at top level of a file.")
+                raise ParseError.ParseError(token.source, "'include' can only be instantiated at top level of a file.")
 
             top.append(token.getNode(context))
 
@@ -235,9 +235,9 @@ def parse(source, context=ParseContext.ParseContext()):
             top.append(token.getNode(context))
 
     if not token_stack:
-        raise ParseError.ParseError(token.source, "Unbalanced, too many, %end statement.")
+        raise ParseError.ParseError(token.source, "Unbalanced, too many, 'end' statement.")
     elif len(token_stack) > 1:
-        raise ParseError.ParseError(token.source, "Unbalanced, too few, %end statement.")
+        raise ParseError.ParseError(token.source, "Unbalanced, too few, 'end' statement.")
 
     template = token_stack[-1]
     return template
