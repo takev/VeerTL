@@ -83,6 +83,7 @@ class RenderContext (object):
         del RenderContext.render_contexts[id(frame)]
 
     def append(self, value):
+        # XXX Feed type parser when not self.output
         self.output.append(value)
 
     def callingBlock(self, name):

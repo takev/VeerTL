@@ -43,7 +43,6 @@ class FunctionNode (Node.Node):
         if self.prior is not None:
             _locals["prior"] = self.prior
 
-        print("__call__", str(self.name), _locals, file=sys.stderr)
         context.push(_locals)
 
         r = Node.Node.renderSequence(context, self.sequence)
@@ -55,7 +54,6 @@ class FunctionNode (Node.Node):
             raise RenderError.RenderError(self.name, "Unexpected break or continue in function.")
 
         context.pop()
-        print("/__call__", str(self.name), _locals, file=sys.stderr)
         return result
 
     def append(self, node):

@@ -20,13 +20,11 @@ class PlaceholderNode (Node.Node):
         return "%%{%s}" % str(self.expression)
 
     def render(self, context):
-        print("placeholder", str(self.expression), context.locals, file=sys.stderr)
         try:
             result = context.eval(self.code)
         except Exception as e:
             raise RenderError.RenderError(self.expression, "Could not evaluate Python expression.") from e
 
         context.append(result)
-        print("/placeholder", str(self.expression), context.locals, file=sys.stderr)
         return None
 

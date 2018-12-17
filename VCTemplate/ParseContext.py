@@ -9,7 +9,6 @@ class ParseContext (object):
 
     def addFunction(self, name, func):
         old_func = self.functions.get(str(name), None)
-        print(str(name), old_func, repr(self.functions), file=sys.stderr)
         self.functions[str(name)] = func
         return old_func
 

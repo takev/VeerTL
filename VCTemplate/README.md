@@ -5,7 +5,13 @@ but specifically for VHDL. The language was inspired by makotemplate.org, but wi
 a simpler data model making it more easy to do more complicated stuff.
 
 ## Data model
+Like Python all assignments at the top level of a file will be added to the
+shared locals/globals dictionary. Inside functions all assignments are done
+in the locals dictionary.
 
+Unlike the Python import statement, the %include statement includes the file inline
+with the text that has the %include statement and any assignments done in an include
+file are added to the shared locals/globals dictionary.
 
 ## Syntax
 
@@ -152,7 +158,7 @@ A function with a return statement will simply return with its value.
 A function without a return statement will return its textual-output.
 
 Functions with the same name will replace the previously defined function.
-The previously defined function is available as `prior` inside the block.
+The previously defined function is available as `prior()` inside the block.
 This functionaliy together with the `%include` statement can be used for
 as a simple form of object-oriented-polymorphism.
 
@@ -183,7 +189,10 @@ name is defined later it instead is executed in place of the first. A block
 of the same name will only be implicently executed once, in place of the first
 definition.
 
-The previously defined block is available as `prior` inside the block.
+A block is a function without arguments, which is directly called after its
+definition.
+
+The previously defined block is available as `prior()` inside the block.
 This functionaliy together with the `%include` statement can be used for
 as a simple form of object-oriented-polymorphism.
 
@@ -192,6 +201,4 @@ as a simple form of object-oriented-polymorphism.
 <block>
 %end
 ```
-
-
 
