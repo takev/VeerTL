@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+#
+# Template Language for code generation.
+# Copyright (C) 2018  Tjienta Vara
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import argparse
+import VeerTL.Parser as vtlp
+
+arg_parser = argparse.ArgumentParser(
+    description="Template Language for code generation"
+)
+arg_parser.add_argument("input-paths", nargs="*")
+arg_parser.add_argument("--verbose", "-v", action="count")
+arg_parser.add_argument("--walk", action="store_true", help="Walk the given directory for templates ending in .vtl")
+arg_parser.add_argument("--output-dir", help="In combination with walk, the directory where all rendered templates are copied to")
+
+options = arg_parser.parse_args()
+
+
+if options.walk:
+    if len(options.input_paths) == 0:
+        options.input_paths.append(".")
+
+    print(options.input_paths)
+else:
+    print(options.input_paths)
+
+
+
+print("Hello World")
+
