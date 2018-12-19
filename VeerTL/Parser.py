@@ -128,12 +128,17 @@ def optimizedTokenize(source, start_char):
     [<statement 'if a == 3:\\n    a = 5\\n'>]
     """
 
-    previous_token = None
+    token_fifo = []
     for token in tokenize(source, start_char=start_char):
+        if not token_fifo or not token_fifo[-1].merge(token):
+            token_fifo.append(token)
 
-        if not previous_token or not previous_token.merge(token):
-            yield token
-            previous_token = token
+        if len(token_fifo) >= 2:
+            yield token_fifo[0]
+            del token_fifo[0]
+
+    for token in token_fifo:
+        yield token
 
 def parse(source, context=ParseContext.ParseContext()):
     """

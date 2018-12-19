@@ -98,12 +98,11 @@ class SourceFile (object):
     def merge(self, other):
         """Merge SourceFile if they point to the same file and the stop and start line up.
         """
-        if not self.isSameFile(other):
-            raise IndexError("Could not merge two source files as the files do not match.")
-        if self.stop != other.start:
-            raise IndexError("Could not merge two source files as .stop and .start do not match up.")
+        if not self.isSameFile(other) or self.stop != other.start:
+            return False
 
         self.stop = other.stop
+        return True
 
     def getRest(self):
         return self[self.stop:len(self.text)]

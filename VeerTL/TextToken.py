@@ -34,8 +34,7 @@ class TextToken (Token.Token):
 
     def merge(self, other):
         if isinstance(other, TextToken):
-            self.source.merge(other.source)
-            return True
+            return self.source.merge(other.source)
         else:
             return False
 
