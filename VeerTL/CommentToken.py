@@ -14,12 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import sys
-
 from . import Token
-from . import StatementNode
+from . import CommentNode
 
-class StatementToken (Token.Token):
+class CommentToken (Token.Token):
     def __init__(self, source):
         statement = (source + 2).getLine()
         self.lines = [str(statement)]
@@ -30,13 +28,13 @@ class StatementToken (Token.Token):
         return "\n".join(x[leading_spaces:] for x in self.lines) + "\n"
 
     def __repr__(self):
-        return "<statement %s>" % repr(str(self))
+        return "<comment %s>" % repr(str(self))
 
     def getNode(self, context):
-        return StatementNode.StatementNode(context, self.source, str(self))
+        return CommentNode.CommentNode(context, self.source, str(self))
 
     def merge(self, other):
-        if isinstance(other, StatementToken):
+        if isinstance(other, CommentToken):
             self.lines.append(other.lines[0])
             return True
         else:

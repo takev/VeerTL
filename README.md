@@ -31,6 +31,16 @@ The placeholder can also be used to escape the `%` character, for example:
 %{"%"}
 ```
 
+### Comment
+You can add comments to your template which will not be emitted to the output.
+
+```
+%# <comment line 1>
+%# <comment line 2>
+%# <comment line ...>
+%# <comment line n>
+```
+
 ### Python code
 You can execute a Python code directly in the template, this is mostly useful for importing
 external Python code or to calculate something that will be formated later by the template.

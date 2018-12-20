@@ -36,6 +36,7 @@ from . import BlockToken
 from . import TextToken
 from . import PlaceholderToken
 from . import StatementToken
+from . import CommentToken
 from . import FlowControlToken
 
 from . import Template
@@ -61,6 +62,9 @@ STATEMENT_PARSERS = {
 def parseToken(source, start_char):
     if source.startswith(start_char + "{"):
         return PlaceholderToken.PlaceholderToken(source)
+
+    elif source.startswith(start_char + "#"):
+        return CommentToken.CommentToken(source)
 
     elif source.startswith(start_char + start_char):
         return StatementToken.StatementToken(source)

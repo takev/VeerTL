@@ -29,8 +29,8 @@ class Template (Node.Node):
     def append(self, node):
         self.sequence.append(node)
 
-    def makeRenderContext(self):
-        return self.parse_context.makeRenderContext()
+    def makeRenderContext(self, _globals={}):
+        return self.parse_context.makeRenderContext(_globals=_globals)
 
     def render(self, context):
         return Node.Node.renderSequence(context, self.sequence)

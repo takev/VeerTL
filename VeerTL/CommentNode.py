@@ -14,23 +14,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import sys
+import parser
 
-from . import ParseError
-from . import RenderContext
+from . import Node
 
-class ParseContext (object):
-    def __init__(self):
-        self.start_char = "%"
-        self.functions = {}
+class CommentNode (Node.Node):
+    def __init__(self, context, source, lines):
+        super().__init__(context)
+        self.source = source
+        self.lines = lines
 
-    def addFunction(self, name, func):
-        old_func = self.functions.get(str(name), None)
-        self.functions[str(name)] = func
-        return old_func
+    def __repr__(self):
+        return "<comment %s>" % repr(self.lines)
 
-    def makeRenderContext(self, _globals={}):
-        _globals = _globals.copy()
-        _globals.update(self.functions.copy())
-        return RenderContext.RenderContext(_globals=_globals, _locals=_globals)
+    def render(self, context):
+        return None
 

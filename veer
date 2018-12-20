@@ -46,7 +46,12 @@ def log(level, s):
 def render_template(input_path, output_path):
     source_file = VeerTL.SourceFile(input_path)
     template = VeerTL.parse(source_file)
-    context = template.makeRenderContext()
+
+    _globals = {
+        "input_path": input_path,
+        "output_path": output_path
+    }
+    context = template.makeRenderContext(_globals)
     template.render(context)
 
     fd = open(output_path, "wt")
