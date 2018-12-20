@@ -42,8 +42,23 @@ class DoWhileNode (Node.Node):
             raise ParseError.ParseError(expression, "Could not compile Python code.") from e
 
     def render(self, context):
+        if "loop" in context.locals:
+            outer_loop = context.locals[loop]
+        else:
+            outer_loop = None
+
+        i = 0
         while True:
+            context["loop"] = LoopContext.LoopContext(i, None, None, outer_loop)
+
             r = Node.Node.renderSequence(context, self.sequence)
+
+            # Reset "loop" variable in case we return.  
+            if outer_loop is None:
+                del context["loop"]
+            else:
+                context["loop"] = outer_loop
+
             if isinstance(r, ContinueNode.ContinueNode):
                 continue
             elif isinstance(r, BreakNode.BreakNode):
@@ -58,6 +73,8 @@ class DoWhileNode (Node.Node):
 
             if not result:
                 break
+
+            i += 1
 
         return None
         

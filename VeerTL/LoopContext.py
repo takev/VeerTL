@@ -15,10 +15,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 class LoopContext (object):
-    def __init__(self, i, value=None, length=None, outer=None):
+    def __init__(self, i, value=None, length=None, outer_loop=None):
         self.i = i
         self.value = value
-        self.outer = outer
+        self.loop = outer_loop
         self.length = length
         self.first = (i == 0)
 

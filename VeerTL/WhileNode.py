@@ -39,6 +39,12 @@ class WhileNode (Node.Node):
         self.sequence.append(node)
 
     def render(self, context):
+        if "loop" in context.locals:
+            outer_loop = context.locals[loop]
+        else:
+            outer_loop = None
+
+        i = 0
         while True:
             try:
                 result = context.eval(self.code)
@@ -48,13 +54,24 @@ class WhileNode (Node.Node):
             if not result:
                 break
 
+            context["loop"] = LoopContext.LoopContext(i, None, None, outer_loop)
+
             r = Node.Node.renderSequence(context, self.sequence)
+
+            # Reset "loop" variable in case we return.  
+            if outer_loop is None:
+                del context["loop"]
+            else:
+                context["loop"] = outer_loop
+
             if isinstance(r, ContinueNode.ContinueNode):
                 continue
             elif isinstance(r, BreakNode.BreakNode):
                 break
             elif isinstance(r, ReturnNode.ReturnNode):
                 return r
+
+            i += 1
 
         return None
         

@@ -66,12 +66,17 @@ class ForNode (Node.Node):
 
         if result:
             if "loop" in context.locals:
-                outer = context.locals[loop]
+                outer_loop = context.locals[loop]
             else:
-                outer = None
+                outer_loop = None
+
+            try:
+                length = len(result)
+            except TypeError:
+                length = None
 
             for i, values in enumerate(result):
-                context["loop"] = ForNode.LoopContext(i, values, len(result), outer)
+                context["loop"] = LoopContext.LoopContext(i, values, length, outer_loop)
 
                 if len(self.names) == 1:
                     context[self.names[0]] = values
@@ -82,10 +87,10 @@ class ForNode (Node.Node):
                 r = Node.Node.renderSequence(context, self.sequence)
 
                 # Reset "loop" variable in case we return.  
-                if outer is None:
+                if outer_loop is None:
                     del context["loop"]
                 else:
-                    context["loop"] = outer
+                    context["loop"] = outer_loop
 
                 if isinstance(r, ContinueNode.ContinueNode):
                     continue

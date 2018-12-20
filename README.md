@@ -111,8 +111,8 @@ The `%else` part of the for loop is only executed when the result of the Python 
 had zero items.
 
 A local `loop` variable is available inside the block. It has the attributes `first`, `last` and `i`
-for often used information to format code properly. The `outer` attribute is used to get information
-for the next output loop.
+for often used information to format code properly. The `loop` attribute is used to get information
+for the next outer loop.
 
 ```
 %for <name(s)> in <Python expression>
@@ -126,7 +126,7 @@ for the next output loop.
 A while loop executes a block multiple times until the Python expression returns `False`.
 
 A local `loop` variable is available inside the block. It has the attributes `first` and `i`
-for often used information to format code properly. The `outer` attribute is used to get information
+for often used information to format code properly. The `loop` attribute is used to get information
 for the next outer loop.
 
 ```
@@ -139,7 +139,7 @@ for the next outer loop.
 A do-while loop executes a block at least once until the Python expression returns `False`.
 
 A local `loop` variable is available inside the block. It has the attributes `first` and `i`
-for often used information to format code properly. The `outer` attribute is used to get information
+for often used information to format code properly. The `loop` attribute is used to get information
 for the next outer loop.
 
 ```
