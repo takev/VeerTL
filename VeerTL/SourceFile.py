@@ -148,6 +148,13 @@ class SourceFile (object):
 
         return self[:new_stop]
 
+    def getWhiteSpace(self):
+        new_stop = self.start
+        while new_stop < self.stop and self.text[new_stop].isspace():
+            new_stop += 1
+
+        return self[:new_stop]
+
     def getSimpleToken(self):
         # Skip whitespace.
         start = self.start

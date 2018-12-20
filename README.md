@@ -41,6 +41,19 @@ You can add comments to your template which will not be emitted to the output.
 %# <comment line n>
 ```
 
+### Ignore White Space
+You can remove whitespace using the ignore-white-space command.
+
+```
+   <line>%\
+
+        <continued line>
+```
+
+```
+<line 2>%\       <continued line 2>
+```
+
 ### Python code
 You can execute a Python code directly in the template, this is mostly useful for importing
 external Python code or to calculate something that will be formated later by the template.

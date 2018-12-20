@@ -37,6 +37,7 @@ from . import TextToken
 from . import PlaceholderToken
 from . import StatementToken
 from . import CommentToken
+from . import IgnoreWhiteSpaceToken
 from . import FlowControlToken
 
 from . import Template
@@ -65,6 +66,9 @@ def parseToken(source, start_char):
 
     elif source.startswith(start_char + "#"):
         return CommentToken.CommentToken(source)
+
+    elif source.startswith(start_char + "\\"):
+        return IgnoreWhiteSpaceToken.IgnoreWhiteSpaceToken(source)
 
     elif source.startswith(start_char + start_char):
         return StatementToken.StatementToken(source)
