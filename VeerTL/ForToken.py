@@ -17,6 +17,7 @@
 from . import Token
 from . import FlowControlToken
 from . import ForNode
+from . import ParseError
 
 class ForToken (Token.Token, FlowControlToken.FlowControlToken):
     def __init__(self, token_source):
@@ -35,7 +36,7 @@ class ForToken (Token.Token, FlowControlToken.FlowControlToken):
             elif str(comma) == "in":
                 break
             else:
-                raise ParseError(comma, "Unexpected string '%s'." % str(comma))
+                raise ParseError.ParseError(comma, "Unexpected string '%s'." % str(comma))
 
         self.expression = source.getSimpleExpression().strip()
         super().__init__(token_source[:self.expression.stop])
