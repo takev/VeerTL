@@ -23,7 +23,8 @@ class Node (object):
             r = node.render(context)
             if r is not None:
                 return r
-        return r
+
+        return None
 
     def __init__(self, context):
         self.parse_context = context

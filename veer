@@ -22,6 +22,7 @@ import os.path
 import shutil
 import fnmatch
 import gzip
+import sys
 
 import VeerTL
 
@@ -31,7 +32,7 @@ arg_parser = argparse.ArgumentParser(
 arg_parser.add_argument("inputs", nargs="+")
 arg_parser.add_argument("--verbose", "-v", action="count", default=0)
 arg_parser.add_argument("--output", "-o", help="Output file or output dir")
-arg_parser.add_argument("--ignore", help="Ignore files that match a glob pattern", action="append", default=["*.vti"])
+arg_parser.add_argument("--ignore", help="Ignore files that match a glob pattern", action="append", default=[".*", "*.vti"])
 arg_parser.add_argument("--gzip", "-g", help="Gzip files that matach a glob files", action="append", default=[])
 arg_parser.add_argument("--hard-link", "-l", help="Create hard links of files", action="store_const", dest="link_method", const="h", default="h")
 arg_parser.add_argument("--symbolic-link", "-s", help="Create symbolic links to files", action="store_const", dest="link_method", const="s")
@@ -93,6 +94,12 @@ def handle_file(input_path, output_path, output_is_filename=False):
         log(1, "File already same '%s' -> '%s'" % (input_path, output_path))
 
     else:
+        # Remove the old file if it existed.
+        try:
+            os.unlink(output_path)
+        except FileNotFoundError:
+            pass
+
         if options.link_method == "h":
             log(2, "Hard linking '%s' -> '%s'" % (input_path, output_path))
             os.link(input_path, output_path)
@@ -136,6 +143,8 @@ def walk_dir(input_dir, output_dir):
             log(1, "Not a file or directory '%s'." % entry.path)
 
 def main():
+    reference_path = sys.path[:]
+
     for input_path in options.inputs:
         if options.output:
             output_path = options.output
@@ -149,7 +158,9 @@ def main():
             handle_file(input_path, output_path, output_is_filename=False)
 
         elif os.path.isdir(input_path):
+            sys.path.append(os.path.join(input_path, "pylib"))
             walk_dir(input_path, output_path)
+            sys.path = reference_path[:]
 
         else:
             log(1, "Not a file or directory '%s'." % input_path)

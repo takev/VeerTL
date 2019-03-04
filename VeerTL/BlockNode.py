@@ -19,6 +19,7 @@ import parser
 
 from . import FunctionNode
 from . import ParseError
+from . import RenderError
 
 class BlockNode (FunctionNode.FunctionNode):
     def __init__(self, context, name):
@@ -36,7 +37,7 @@ class BlockNode (FunctionNode.FunctionNode):
             try:
                 result = context.eval(self.code)
             except Exception as e:
-                raise RenderError.RenderError(self.expression, "Could not evaluate Python expression.") from e
+                raise RenderError.RenderError(self.name, "Could not evaluate Python expression.") from e
 
             context.append(result)
 
